@@ -1,0 +1,89 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:i="clr-namespace:Avalonia.Interactivity;assembly=Avalonia.Interactivity"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:AsteroidGameAvalonia.ViewModels"
+             xmlns:v="clr-namespace:AsteroidGameAvalonia.Views"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             x:Class="AsteroidGameAvalonia.Views.MainView"
+             x:DataType="vm:AsteroidGameViewModel"
+             d:DataContext="{x:Static v:DesignData.ViewModel}" Focusable="True">
+	<UserControl.KeyBindings>
+		<KeyBinding Gesture="Left" Command="{Binding MoveLeftCommand}" />
+		<KeyBinding Gesture="Right" Command="{Binding MoveRightCommand}" />
+		<KeyBinding Gesture="Space" Command="{Binding TogglePauseCommand}" />
+	</UserControl.KeyBindings>
+
+	<Grid x:Name="Grid">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="60"/>
+			<RowDefinition Height="*"/>
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*"/>
+			<ColumnDefinition Width="60"/>
+		</Grid.ColumnDefinitions>
+
+		<StackPanel Grid.Row="0" Grid.ColumnSpan="2" Background="Gray" HorizontalAlignment="Stretch" Orientation="Horizontal">
+			<Button Content="New Game"
+                    Command="{Binding NewGameCommand}"
+                    Height="40" Margin="10" IsEnabled="{Binding Paused}"
+                    HorizontalAlignment="Center" IsTabStop="False"/>
+			<Button Content="Load Game"
+                    Command="{Binding LoadGameCommand}"
+                    Height="40" Margin="10" IsEnabled="{Binding Paused}"
+                    HorizontalAlignment="Center" IsTabStop="False"/>
+			<Button Content="Save Game"
+                    Command="{Binding SaveGameCommand}"
+                    Height="40" Margin="10" IsEnabled="{Binding SaveGameEnabled}"
+                    HorizontalAlignment="Center" IsTabStop="False"/>
+			<TextBlock Text="{Binding ElapsedTime}" Foreground="White" FontSize="20"
+                       HorizontalAlignment="Center" Margin="10" VerticalAlignment="Center"/>
+		</StackPanel>
+
+		<Canvas Grid.Row="1" Grid.Column="0" Canvas.ZIndex="0"
+                Background="Black" HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch">
+
+			<Image Source="/Assets/spaceship.png"
+                   Width="{Binding Spaceship.Size}"
+                   Height="{Binding Spaceship.Size}"
+                   Canvas.Left="{Binding Spaceship.Position}"
+                   Canvas.Top="{Binding SpaceshipTop}" ZIndex="2"/>
+
+			<ItemsControl ItemsSource="{Binding Asteroids}">
+				<ItemsControl.ItemsPanel>
+					<ItemsPanelTemplate>
+						<Canvas Width="{Binding GameWidth}"
+                                Height="{Binding GameHeight}"
+                                Canvas.ZIndex="1"/>
+					</ItemsPanelTemplate>
+				</ItemsControl.ItemsPanel>
+				<ItemsControl.Styles>
+					<Style Selector="ItemsControl > ContentPresenter">
+						<Setter Property="Canvas.Left" Value="{Binding PositionX}" />
+						<Setter Property="Canvas.Top" Value="{Binding PositionY}" />
+					</Style>
+				</ItemsControl.Styles>
+				<ItemsControl.ItemTemplate>
+					<DataTemplate>
+						<Image Source="/Assets/asteroid.png" Width="{Binding Size}" Height="{Binding Size}"/>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+		</Canvas>
+
+		<StackPanel Grid.Row="1" Grid.Column="1" Background="Gray" VerticalAlignment="Stretch" Orientation="Vertical">
+			<Button Content="||"
+                    Command="{Binding TogglePauseCommand}"
+                    Height="40" Margin="10" HorizontalAlignment="Center" IsTabStop="False"/>
+			<Button Content="←"
+                    Command="{Binding MoveLeftCommand}"
+                    Height="40" Margin="10" HorizontalAlignment="Center" IsTabStop="False"/>
+			<Button Content="→"
+                    Command="{Binding MoveRightCommand}"
+                    Height="40" Margin="10" HorizontalAlignment="Center" IsTabStop="False"/>
+		</StackPanel>
+	</Grid>
+</UserControl>
